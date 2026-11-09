@@ -25,6 +25,16 @@ Figma components or variants explicitly (they are exporter API, ADR-014).
 
 - `wheelPoint` / `wheelToHs` from `@osc/controls`.
 
+## 2026-11-09 — This repo is the design system's single source
+
+**Changed**
+
+- `otakoyi-controls` is now the only home of the design system. The Otakoyi Control product
+  (private) checks it out as a git submodule and builds against it, so a design-system change is a
+  PR here first, then a submodule bump in the product.
+- `@osc/ui` exports the `ImageAssetDto` / `PromptPresetDto` types; the product checks at type level
+  that its bridge protocol returns the same shapes.
+
 ## 2026-11-01 — System Screen (standard System group, ADR-018)
 
 **Added**

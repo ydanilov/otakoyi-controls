@@ -50,6 +50,7 @@ export {
   type PickedImage,
   type PromptPresets,
 } from "./platform/services";
+export type { ImageAssetDto, PromptPresetDto } from "./platform/dto";
 export { HoldToConfirm } from "./controls/HoldToConfirm";
 export { ColorPicker } from "./controls/ColorPicker";
 export {
