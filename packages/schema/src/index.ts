@@ -383,11 +383,23 @@ export const ColorPicker = z.object({
   /** Restrict to a palette (e.g. the client's brand colours): swatches instead of the pickers. */
   swatches: z.array(hex).optional(),
   /**
-   * Figma Color Picker `Style`: which picker shows first — hue ring + saturation / brightness knobs,
-   * a saturation × brightness square with a hue strip, or a hue × saturation wheel with a
-   * brightness slider. The user can switch; their choice is kept on the device. Same value in all.
+   * Figma Color Picker `Style`: which picker shows first — `square` (default: saturation ×
+   * brightness field with a hue strip) or `knobs` (hue ring + saturation / brightness knobs, for
+   * live work). The user can switch; their choice is kept on the device. Same value in both. The
+   * round `wheel` style was removed; configs that still name it get `square`.
    */
-  pickerStyle: z.enum(["knobs", "square", "wheel"]).optional(),
+  pickerStyle: z.preprocess(
+    (v) => (v === "wheel" ? "square" : v),
+    z.enum(["square", "knobs"]).optional(),
+  ),
+  /**
+   * Square style: precise sliders under the hue strip, in this order (Figma Color Picker
+   * `showSaturation` / `showBrightness`). They edit the same colour; nothing new is sent.
+   */
+  sliders: z
+    .array(z.enum(["saturation", "brightness"]))
+    .max(2)
+    .optional(),
 });
 
 /** Multi-select latching buttons: each button toggles on its own and has its own address. */

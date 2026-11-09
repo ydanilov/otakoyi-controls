@@ -3,10 +3,8 @@ import {
   Circle,
   Group,
   LinearGradient,
-  RadialGradient,
   RoundedRect,
   Shadow,
-  SweepGradient,
   vec,
 } from "@shopify/react-native-skia";
 import {
@@ -22,9 +20,8 @@ import {
   stripPosition,
   stripX,
   syncHsb,
-  wheelPoint,
-  wheelToHs,
   type Hsb,
+  type PickerSlider,
   type PickerStyle,
 } from "@osc/controls";
 import { Control, type ControlOf } from "@osc/schema";
@@ -41,7 +38,7 @@ import { Knob } from "./Knob";
 import type { ControlProps } from "./types";
 import { useLayout } from "./useLayout";
 
-/** The colour model's own black and white (not design colours): the S × B field and wheel shading. */
+/** The colour model's own black and white (not design colours): the S × B field shading. */
 const WHITE = hsbToHex({ h: 0, s: 0, b: 1 });
 const BLACK = hsbToHex({ h: 0, s: 0, b: 0 });
 
@@ -49,22 +46,21 @@ const BLACK = hsbToHex({ h: 0, s: 0, b: 0 });
 const HUE_STRIP = Array.from({ length: 7 }, (_, i) => hsbToHex({ h: i * 60, s: 1, b: 1 }));
 /** Strip / slider height and thumb (Figma: 28 pt capsules). */
 const STRIP = 28;
-/** Cursor on the square and the wheel (Figma: 24 pt, 3 pt white ring). */
+/** Cursor on the square (Figma: 24 pt, 3 pt white ring). */
 const CURSOR = 24;
 const RING = 3;
 /** Values leave through a throttle while dragging (the last one always on release). */
 const SEND_HZ = 30;
 const STYLE_LABEL: Record<PickerStyle, string> = {
-  knobs: "Knobs",
   square: "Square",
-  wheel: "Wheel",
+  knobs: "Knobs",
 };
 
 /**
- * Color Picker (Figma Patterns › Color Picker 139:1797, Style=Knobs / Square / Wheel). Header:
- * title, live swatch and hex. A capsule segmented control switches the picker style — a local view
- * preference kept per control on the device (`viewPrefs`); `pickerStyle` in the config is the
- * default. Every style edits the same hue / saturation / brightness and sends the same value
+ * Color Picker (Figma Patterns › Color Picker 139:1797, Style=Square / Knobs). Header: title, live
+ * swatch and hex. A capsule segmented control switches the picker style — a local view preference
+ * kept per control on the device (`viewPrefs`); `pickerStyle` in the config is the default (Square).
+ * `sliders` adds precise saturation / brightness sliders under the Square's hue strip. Every style edits the same hue / saturation / brightness and sends the same value
  * (`format`: by default three addresses `/h` `/s` `/b`, or one rgb, hsv or hex message — @osc/controls
  * `messagesFor`). With `swatches` it is a palette instead.
  * Maths: `@osc/controls` color.ts.
@@ -84,7 +80,7 @@ function HsbPicker({ control: c, value, onChange, disabled }: ControlProps<"colo
     latest.current = next;
     setHsbState(next);
   }, []);
-  const [style, setStyle] = React.useState<PickerStyle>(c.pickerStyle ?? "knobs");
+  const [style, setStyle] = React.useState<PickerStyle>(c.pickerStyle ?? "square");
   const key = viewPrefKey(services.pult, c.id, "pickerStyle");
 
   // The user's own choice of style, kept on this device.
@@ -170,9 +166,10 @@ function HsbPicker({ control: c, value, onChange, disabled }: ControlProps<"colo
       </View>
       <StyleSwitch value={style} onChange={choose} />
       <View className="flex-1">
+        {style === "square" && (
+          <SquareBody hsb={hsb} edit={edit} disabled={disabled} sliders={c.sliders ?? []} />
+        )}
         {style === "knobs" && <KnobsBody c={c} hsb={hsb} edit={edit} disabled={disabled} />}
-        {style === "square" && <SquareBody hsb={hsb} edit={edit} disabled={disabled} />}
-        {style === "wheel" && <WheelBody hsb={hsb} edit={edit} disabled={disabled} />}
       </View>
     </Surface>
   );
@@ -180,7 +177,7 @@ function HsbPicker({ control: c, value, onChange, disabled }: ControlProps<"colo
 
 type Edit = (patch: Partial<Hsb>, final?: boolean) => void;
 
-/** iOS capsule segmented control: Knobs | Square | Wheel (the selected one raised). */
+/** iOS capsule segmented control: Square | Knobs (the selected one raised). */
 function StyleSwitch({
   value,
   onChange,
@@ -338,7 +335,7 @@ function Cursor({ x, y, color, ring }: { x: number; y: number; color: string; ri
   );
 }
 
-/** A 28 pt capsule strip (hue strip, brightness slider) with a round thumb. */
+/** A 28 pt capsule strip (hue strip, saturation / brightness sliders) with a round thumb. */
 function Strip({
   colors,
   position,
@@ -427,17 +424,20 @@ function Readout({ hsb }: { hsb: Hsb }) {
 
 /**
  * Style=Square: a Photoshop-style saturation × brightness field (hue base, white → transparent
- * left to right, transparent → black top to bottom) with a round cursor, a hue strip and the
- * readout.
+ * left to right, transparent → black top to bottom) with a round cursor, a hue strip, the optional
+ * saturation (hsb(h, 0, B) → hsb(h, 1, B)) and brightness (hsb(h, S, 0) → hsb(h, S, 1)) sliders,
+ * and the readout.
  */
 function SquareBody({
   hsb,
   edit,
   disabled,
+  sliders,
 }: {
   hsb: Hsb;
   edit: Edit;
   disabled?: boolean | undefined;
+  sliders: readonly PickerSlider[];
 }) {
   const t = useTheme();
   const { size, onLayout } = useLayout();
@@ -499,81 +499,31 @@ function SquareBody({
         disabled={disabled}
         onMove={(q, final) => edit({ h: q * 360 }, final)}
       />
-      <Readout hsb={hsb} />
-    </View>
-  );
-}
-
-/**
- * Style=Wheel: a hue × saturation wheel (angular hue, white centre, darkened by 1 − B) in a
- * recessed well, a brightness slider black → hsb(h, S, 1), and the readout.
- */
-function WheelBody({
-  hsb,
-  edit,
-  disabled,
-}: {
-  hsb: Hsb;
-  edit: Edit;
-  disabled?: boolean | undefined;
-}) {
-  const t = useTheme();
-  const { size, onLayout } = useLayout();
-  const { width: w, height: h } = size;
-  const d = Math.max(0, Math.min(w, h));
-  const cx = w / 2;
-  const cy = d / 2;
-  const R = Math.max(0, d / 2 - 8);
-  const pan = useDrag(!disabled, (x, y, final) => edit(wheelToHs(x - cx, y - cy, R), final));
-  const p = wheelPoint(hsb.h, hsb.s, R);
-  const [b0, b1] = brightnessGradient(hsb.h, hsb.s);
-  const ro = hsbReadout(hsb);
-  return (
-    <View className="flex-1 gap-4">
-      <GestureDetector gesture={pan}>
-        <View
-          className="flex-1"
-          onLayout={onLayout}
-          accessible
-          accessibilityRole="adjustable"
-          accessibilityLabel="Hue and saturation"
-          accessibilityValue={{ text: `Hue ${ro.h}, saturation ${ro.s}` }}
-        >
-          {d > 0 && (
-            <Canvas style={{ width: w, height: h }}>
-              <Circle cx={cx} cy={cy} r={d / 2} color={t.control.track}>
-                <Shadow dx={0} dy={3} blur={8} color={t.elevation.insetShadow} inner />
-              </Circle>
-              <Circle cx={cx} cy={cy} r={R}>
-                <SweepGradient
-                  c={vec(cx, cy)}
-                  colors={HUE_STRIP}
-                  positions={HUE_STRIP.map((_, i) => i / 6)}
-                />
-              </Circle>
-              <Circle cx={cx} cy={cy} r={R}>
-                <RadialGradient c={vec(cx, cy)} r={R} colors={[WHITE, withAlpha(WHITE, 0)]} />
-              </Circle>
-              <Circle cx={cx} cy={cy} r={R} color={BLACK} opacity={1 - hsb.b} />
-              <Cursor x={cx + p.x} y={cy + p.y} color={hsbToHex(hsb)} ring={WHITE} />
-            </Canvas>
-          )}
-        </View>
-      </GestureDetector>
-      <View className="gap-2">
-        <Text className="text-muted-foreground text-xs font-medium uppercase tracking-overline">
-          Brightness
-        </Text>
-        <Strip
-          colors={[b0, b1]}
-          position={hsb.b}
-          thumbColor={hsbToHex(hsb)}
-          label="Brightness"
-          valueText={ro.b}
-          disabled={disabled}
-          onMove={(q, final) => edit({ b: q }, final)}
-        />
-      </View>
+      {sliders.map((k) =>
+        k === "saturation" ? (
+          <Strip
+            key={k}
+            colors={saturationGradient(hsb.h, hsb.b)}
+            position={hsb.s}
+            thumbColor={hsbToHex(hsb)}
+            label="Saturation"
+            valueText={ro.s}
+            disabled={disabled}
+            onMove={(q, final) => edit({ s: q }, final)}
+          />
+        ) : (
+          <Strip
+            key={k}
+            colors={brightnessGradient(hsb.h, hsb.s)}
+            position={hsb.b}
+            thumbColor={hsbToHex(hsb)}
+            label="Brightness"
+            valueText={ro.b}
+            disabled={disabled}
+            onMove={(q, final) => edit({ b: q }, final)}
+          />
+        ),
+      )}
       <Readout hsb={hsb} />
     </View>
   );

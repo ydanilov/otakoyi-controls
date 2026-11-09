@@ -638,7 +638,7 @@
               "label": "Colour",
               "address": "/light/colour",
               "default": "#3A4CA6",
-              "pickerStyle": "wheel"
+              "pickerStyle": "square"
             }
           ],
           "panels": [],
