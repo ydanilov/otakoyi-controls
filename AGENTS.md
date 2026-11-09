@@ -3,6 +3,10 @@
 The design system of Otakoyi Control (tokens, control logic, components, Storybook). Read this
 before every task.
 
+This repo is the **single source** of the design system. The product (private `otakoyi-osc`: app,
+bridge, protocol, Figma exporter) checks it out as the `design-system` submodule, so keep package
+names (`@osc/*`) and public exports stable; a breaking change needs a matching PR in the product.
+
 ## Hard rules
 
 1. **Tokens only.** Colours, spacing, radii and type come from `@osc/tokens`. Skia controls read

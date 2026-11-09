@@ -3,7 +3,9 @@
 The design system behind **Otakoyi Control**, the controller app for our studio's generative
 installations. The app turns a phone or tablet into a branded control surface (we call it a
 _pult_), and the pult sends OSC to TouchDesigner. This repository holds the design system:
-tokens, control logic and every component, documented in Storybook.
+tokens, control logic and every component, documented in Storybook. It is the single source of
+the design system: the app, the bridge and the studio tools live in a private repo that checks this
+one out as a git submodule.
 
 **[Storybook →](https://otakoyi-controls.vercel.app)** · Live preview:
 [all controls](https://otakoyi-controls.vercel.app/iframe.html?id=controls-touch-light--all-controls&viewMode=story)
