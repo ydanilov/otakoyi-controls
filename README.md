@@ -5,7 +5,10 @@ installations. The app turns a phone or tablet into a branded control surface (w
 _pult_), and the pult sends OSC to TouchDesigner. This repository holds the design system:
 tokens, control logic and every component, documented in Storybook.
 
-**[Storybook →](https://otakoyi-controls.vercel.app)**
+**[Storybook →](https://otakoyi-controls.vercel.app)** · Live preview:
+[all controls](https://otakoyi-controls.vercel.app/iframe.html?id=controls-touch-light--all-controls&viewMode=story)
+· [tablet VJ console](https://otakoyi-controls.vercel.app/iframe.html?id=pult-pult-pager--panels-vj-console&viewMode=story)
+· [phone pult](https://otakoyi-controls.vercel.app/iframe.html?id=pult-pult-pager--panels-lobby-phone&viewMode=story)
 
 ![Controls, dark theme](docs/img/controls-dark.png)
 
