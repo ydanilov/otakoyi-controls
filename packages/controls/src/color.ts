@@ -1,7 +1,7 @@
 import { hexToRgb, hsvToHex, rgbToHsv, type HsbChannel } from "./logic";
 
 /**
- * Colour Picker maths (Figma Patterns › Color Picker, Style=Knobs / Square / Wheel). The picker
+ * Colour Picker maths (Figma Patterns › Color Picker, Style=Square / Knobs). The picker
  * works in HSB (hue 0–360°, saturation and brightness 0–1); every style edits the same three
  * numbers, so switching styles never changes the colour. Pure, unit-tested; `packages/ui` draws.
  */
@@ -15,8 +15,12 @@ export interface Hsb {
   b: number;
 }
 
-export type PickerStyle = "knobs" | "square" | "wheel";
-export const PICKER_STYLES: readonly PickerStyle[] = ["knobs", "square", "wheel"];
+/** Square first: it is the default picker; Knobs is the alternative for live work. */
+export type PickerStyle = "square" | "knobs";
+export const PICKER_STYLES: readonly PickerStyle[] = ["square", "knobs"];
+
+/** Optional precise sliders under the Square picker (same colour, nothing new on the wire). */
+export type PickerSlider = "saturation" | "brightness";
 
 const clamp01 = (v: number) => {
   "worklet";
@@ -70,7 +74,7 @@ export function saturationGradient(h: number, b: number): [string, string] {
   return [hsbToHex({ h, s: 0, b }), hsbToHex({ h, s: 1, b })];
 }
 
-/** Knobs style: the brightness arc runs `hsb(h, S, 0)` → `hsb(h, S, 1)` (also the Wheel slider). */
+/** Knobs style: the brightness arc runs `hsb(h, S, 0)` → `hsb(h, S, 1)` (also the Square's brightness slider). */
 export function brightnessGradient(h: number, s: number): [string, string] {
   return [hsbToHex({ h, s, b: 0 }), hsbToHex({ h, s, b: 1 })];
 }
@@ -111,25 +115,6 @@ export function stripPosition(x: number, width: number, thumb: number): number {
 export function stripX(p: number, width: number, thumb: number): number {
   "worklet";
   return thumb / 2 + clamp01(p) * Math.max(0, width - thumb);
-}
-
-/**
- * Wheel style: hue is the angle (0° = 3 o'clock, clockwise, as Figma's angular gradient), saturation
- * the distance from the centre (0 centre → 1 rim). Point relative to the centre, px.
- */
-export function wheelPoint(h: number, s: number, radius: number): { x: number; y: number } {
-  "worklet";
-  const a = (wrapDeg(h) * Math.PI) / 180;
-  const r = clamp01(s) * radius;
-  return { x: Math.cos(a) * r, y: Math.sin(a) * r };
-}
-
-/** Wheel style: hue and saturation under a finger at (dx, dy) from the centre. Outside the rim = 1. */
-export function wheelToHs(dx: number, dy: number, radius: number): { h: number; s: number } {
-  "worklet";
-  const d = Math.hypot(dx, dy);
-  const h = d === 0 ? 0 : wrapDeg((Math.atan2(dy, dx) * 180) / Math.PI);
-  return { h, s: radius > 0 ? clamp01(d / radius) : 0 };
 }
 
 /** Readout: `H 230°`, `S 65%`, `B 65%` values. */

@@ -11,8 +11,6 @@ import {
   stripPosition,
   stripX,
   syncHsb,
-  wheelPoint,
-  wheelToHs,
   wrapDeg,
 } from "./color";
 import { formatDelta } from "./logic";
@@ -79,18 +77,6 @@ describe("colour picker maths", () => {
     expect(stripPosition(14, 326, 28)).toBe(0);
     expect(stripPosition(312, 326, 28)).toBe(1);
     expect(stripPosition(163, 326, 28)).toBeCloseTo(0.5);
-  });
-
-  it("maps the hue × saturation wheel (0° at 3 o'clock, clockwise)", () => {
-    const p = wheelPoint(230, 0.65, 108);
-    expect(p.x).toBeLessThan(0);
-    expect(p.y).toBeLessThan(0);
-    const hs = wheelToHs(p.x, p.y, 108);
-    expect(hs.h).toBeCloseTo(230);
-    expect(hs.s).toBeCloseTo(0.65);
-    expect(wheelToHs(0, 50, 108).h).toBeCloseTo(90);
-    expect(wheelToHs(500, 0, 108).s).toBe(1);
-    expect(wheelToHs(0, 0, 108)).toEqual({ h: 0, s: 0 });
   });
 
   it("formats the readout", () => {

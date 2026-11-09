@@ -7,6 +7,24 @@ import { Meta } from "@storybook/addon-docs/blocks";
 Design-system changes, newest first. Add an entry in the same PR as the change; mention renamed
 Figma components or variants explicitly (they are exporter API, ADR-014).
 
+## 2026-11-09 — Color Picker: Square first, Wheel removed, optional sliders
+
+**Changed**
+
+- **Color Picker**: Square is the default style; the switcher reads Square | Knobs. Figma: the
+  `Style=Wheel` variant is gone (**breaking for the exporter**: a page that still uses it has
+  nothing to map; the schema reads old `pickerStyle: "wheel"` configs as `square`).
+
+**Added**
+
+- `sliders: ["saturation", "brightness"]`: precise sliders under the Square's hue strip (28 pt,
+  14 pt apart). They edit the same colour; nothing new is sent. Figma: boolean properties
+  `showSaturation` / `showBrightness` on `Style=Square`.
+
+**Removed**
+
+- `wheelPoint` / `wheelToHs` from `@osc/controls`.
+
 ## 2026-11-09 — This repo is the design system's single source
 
 **Changed**

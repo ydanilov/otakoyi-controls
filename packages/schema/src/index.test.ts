@@ -192,6 +192,24 @@ describe("schema v2 layouts (ADR-014)", () => {
     expect(parseConfig(bad).ok).toBe(false);
   });
 
+  it("reads the removed wheel picker as the square one and keeps its sliders", () => {
+    const c = Control.parse({
+      id: "tint",
+      type: "colorPicker",
+      address: "/tint",
+      pickerStyle: "wheel",
+      sliders: ["brightness"],
+    });
+    expect(c.type === "colorPicker" && [c.pickerStyle, c.sliders]).toEqual([
+      "square",
+      ["brightness"],
+    ]);
+    expect(
+      Control.safeParse({ id: "t", type: "colorPicker", address: "/t", sliders: ["alpha"] })
+        .success,
+    ).toBe(false);
+  });
+
   it("still reads v1: grid becomes the tablet layout and is re-flowed for phones", () => {
     const cfg = ok(legacy);
     expect(cfg.schemaVersion).toBe(2);
