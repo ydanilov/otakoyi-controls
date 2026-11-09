@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "types": ["nativewind/types", "node"] },
+  "include": [
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx",
+    "docs/**/*.tsx",
+    "../../packages/ui/nativewind-env.d.ts"
+  ]
+}

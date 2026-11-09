@@ -1,0 +1,22 @@
+{
+  "name": "@osc/tokens",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.json": "./tokens.json",
+    "./tokens.css": "./generated/tokens.css",
+    "./global.css": "./generated/global.css",
+    "./tailwind-preset": "./generated/tailwind-preset.cjs",
+    "./figma/brand-modes.json": "./figma/brand-modes.json"
+  },
+  "scripts": {
+    "build": "tsx scripts/build.ts",
+    "check": "tsx scripts/build.ts --check",
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  }
+}

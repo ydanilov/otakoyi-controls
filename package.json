@@ -1,0 +1,30 @@
+{
+  "name": "otakoyi-controls",
+  "private": true,
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "tokens": "pnpm --filter @osc/tokens build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "pnpm tokens:check && pnpm format:check && pnpm typecheck && pnpm test",
+    "tokens:check": "pnpm --filter @osc/tokens check",
+    "storybook": "pnpm --filter @osc/storybook storybook",
+    "build-storybook": "pnpm --filter @osc/storybook build-storybook",
+    "test-storybook": "pnpm --filter @osc/storybook test-storybook"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "playwright": "^1.56.0",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.0",
+    "turbo": "^2.11.10",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  }
+}

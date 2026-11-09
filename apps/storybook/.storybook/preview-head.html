@@ -1,0 +1,79 @@
+<!--
+  Test hook: counts React commits in the preview (stories read window.__oscCommits, e.g. Pult ›
+  Connected Control › High-rate feedback). Only installed when React DevTools is not present.
+-->
+<script>
+  if (!window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+    window.__oscCommits = 0;
+    window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
+      isDisabled: false,
+      supportsFiber: true,
+      renderers: new Map(),
+      inject: function (renderer) {
+        var id = this.renderers.size + 1;
+        this.renderers.set(id, renderer);
+        return id;
+      },
+      // React DOM commits only (Skia's canvases run their own reconciler).
+      onCommitFiberRoot: function (id) {
+        var r = this.renderers.get(id);
+        if (r && r.rendererPackageName === "react-dom") window.__oscCommits++;
+      },
+      onCommitFiberUnmount: function () {},
+      onPostCommitFiberRoot: function () {},
+      checkDCE: function () {},
+    };
+  }
+</script>
+<!-- Token fonts (tokens.json font.family), served from the @expo-google-fonts packages the app uses. -->
+<style>
+  @font-face {
+    font-family: "Inter";
+    font-weight: 400;
+    src: url("./fonts/inter/400Regular/Inter_400Regular.ttf");
+  }
+  @font-face {
+    font-family: "Inter";
+    font-weight: 500;
+    src: url("./fonts/inter/500Medium/Inter_500Medium.ttf");
+  }
+  @font-face {
+    font-family: "Inter";
+    font-weight: 600;
+    src: url("./fonts/inter/600SemiBold/Inter_600SemiBold.ttf");
+  }
+  @font-face {
+    font-family: "Inter";
+    font-weight: 700;
+    src: url("./fonts/inter/700Bold/Inter_700Bold.ttf");
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-weight: 400;
+    src: url("./fonts/jetbrains-mono/400Regular/JetBrainsMono_400Regular.ttf");
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-weight: 500;
+    src: url("./fonts/jetbrains-mono/500Medium/JetBrainsMono_500Medium.ttf");
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-weight: 700;
+    src: url("./fonts/jetbrains-mono/700Bold/JetBrainsMono_700Bold.ttf");
+  }
+  html,
+  body {
+    margin: 0;
+  }
+  body.sb-main-padded {
+    padding: 0 !important;
+  }
+  #storybook-root {
+    min-height: 100vh;
+    display: flex;
+  }
+  #storybook-root > * {
+    flex: 1;
+  }
+</style>

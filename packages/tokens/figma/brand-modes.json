@@ -1,0 +1,25 @@
+{
+  "source": "Figma OSC (D2HHS8lt7PxZqxibv9PlOQ), Variables › Brand, read with the plugin API on 2026-10-23. Re-dump with the Otakoyi Inspector's Export snapshot (brand) when a Brand mode changes.",
+  "collection": "Brand",
+  "defaultMode": "Otakoyi",
+  "modes": {
+    "Otakoyi": {
+      "brand/primary": "#8DFF2E",
+      "brand/on-primary": "#11140F",
+      "brand/primary-pressed": "#62C41B",
+      "brand/primary-subtle": "#24301F",
+      "brand/accent": "#3DD6FF",
+      "brand/on-accent": "#0D1418",
+      "brand/primary-signal-light": "#4F9116"
+    },
+    "Aurora · Template": {
+      "brand/primary": "#5CE6C8",
+      "brand/on-primary": "#06140F",
+      "brand/primary-pressed": "#3BBFA3",
+      "brand/primary-subtle": "#132723",
+      "brand/accent": "#B7A6FF",
+      "brand/on-accent": "#0D0A1A",
+      "brand/primary-signal-light": "#1F8C75"
+    }
+  }
+}

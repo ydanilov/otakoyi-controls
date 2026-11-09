@@ -1,0 +1,945 @@
+{
+  "schemaVersion": 2,
+  "installation": {
+    "id": "otakoyi-demo",
+    "name": "Otakoyi Demo",
+    "revision": 1,
+    "actions": ["flash", "restart", "blackout", "idle", "pause"]
+  },
+  "targets": [
+    {
+      "id": "td",
+      "name": "Simulated installation",
+      "protocol": "udp",
+      "host": "auto",
+      "port": 7000,
+      "feedbackPort": 9000
+    }
+  ],
+  "theme": {
+    "mode": "dark",
+    "primary": "#8DFF2E",
+    "accent": "#3DD6FF",
+    "splash": "demo-splash.jpg"
+  },
+  "pults": [
+    {
+      "id": "vj",
+      "name": "VJ console",
+      "formFactor": "tablet",
+      "icon": "sliders-horizontal",
+      "pages": [
+        {
+          "id": "mix",
+          "title": "Mix",
+          "controls": [
+            {
+              "id": "layer1",
+              "type": "fader",
+              "label": "Layer 1",
+              "address": "/vj/layer1",
+              "default": 0.6,
+              "showValue": false
+            },
+            {
+              "id": "layer1-on",
+              "type": "toggle",
+              "address": "/vj/layer1/on",
+              "style": "led",
+              "default": true
+            },
+            {
+              "id": "layer2",
+              "type": "fader",
+              "label": "Layer 2",
+              "address": "/vj/layer2",
+              "default": 0.6,
+              "showValue": false
+            },
+            {
+              "id": "layer2-on",
+              "type": "toggle",
+              "address": "/vj/layer2/on",
+              "style": "led",
+              "default": true
+            },
+            {
+              "id": "layer3",
+              "type": "fader",
+              "label": "Layer 3",
+              "address": "/vj/layer3",
+              "default": 0.6,
+              "showValue": false
+            },
+            {
+              "id": "layer3-on",
+              "type": "toggle",
+              "address": "/vj/layer3/on",
+              "style": "led",
+              "default": false
+            },
+            {
+              "id": "master",
+              "type": "fader",
+              "label": "Master",
+              "address": "/vj/master",
+              "default": 0.6,
+              "showValue": false
+            },
+            {
+              "id": "master-on",
+              "type": "toggle",
+              "address": "/vj/master/on",
+              "style": "led",
+              "default": true
+            },
+            {
+              "id": "hue-shift",
+              "type": "knob",
+              "label": "Hue shift",
+              "address": "/vj/hue-shift",
+              "min": 0,
+              "max": 72,
+              "int": true,
+              "unit": "°",
+              "default": 45
+            },
+            {
+              "id": "speed",
+              "type": "knob",
+              "label": "Speed",
+              "address": "/vj/speed",
+              "min": 0,
+              "max": 2.4,
+              "step": 0.1,
+              "unit": "×",
+              "default": 1.5
+            },
+            {
+              "id": "zoom",
+              "type": "knob",
+              "label": "Zoom",
+              "address": "/vj/zoom",
+              "mode": "relative",
+              "min": 0,
+              "max": 100,
+              "int": true
+            },
+            {
+              "id": "rotate",
+              "type": "knob",
+              "label": "Rotate",
+              "address": "/vj/rotate",
+              "mode": "relative",
+              "min": 0,
+              "max": 100,
+              "int": true
+            },
+            {
+              "id": "layers",
+              "type": "buttonGroup",
+              "buttons": [
+                {
+                  "id": "logo",
+                  "label": "Logo",
+                  "caption": "Brand",
+                  "address": "/vj/layer/logo"
+                },
+                {
+                  "id": "data",
+                  "label": "Data",
+                  "caption": "Live feed",
+                  "address": "/vj/layer/data"
+                },
+                {
+                  "id": "audio",
+                  "label": "Audio",
+                  "caption": "React",
+                  "address": "/vj/layer/audio"
+                },
+                {
+                  "id": "grid",
+                  "label": "Grid",
+                  "caption": "Overlay",
+                  "address": "/vj/layer/grid"
+                }
+              ],
+              "default": ["data", "audio"]
+            },
+            {
+              "id": "cam",
+              "type": "thumbstick",
+              "label": "Pan / tilt",
+              "address": "/vj/cam",
+              "press": "/vj/cam/reset",
+              "preset": "thumbstick/camera"
+            },
+            {
+              "id": "zoom-nudge",
+              "type": "fader",
+              "label": "Zoom nudge",
+              "address": "/vj/zoom-nudge",
+              "mode": "relative",
+              "orientation": "horizontal",
+              "min": 0,
+              "max": 1
+            },
+            {
+              "id": "scene",
+              "type": "segmented",
+              "address": "/vj/scene",
+              "options": [
+                {
+                  "label": "Show",
+                  "value": "show",
+                  "icon": "lightning"
+                },
+                {
+                  "label": "Day",
+                  "value": "day",
+                  "icon": "sun"
+                },
+                {
+                  "label": "Night",
+                  "value": "night",
+                  "icon": "moon"
+                },
+                {
+                  "label": "Mono",
+                  "value": "mono",
+                  "icon": "circle-half"
+                }
+              ]
+            }
+          ],
+          "panels": [
+            {
+              "id": "mix",
+              "title": "Mix",
+              "pattern": "faderBank",
+              "controls": [
+                "layer1",
+                "layer1-on",
+                "layer2",
+                "layer2-on",
+                "layer3",
+                "layer3-on",
+                "master",
+                "master-on"
+              ]
+            },
+            {
+              "id": "shape",
+              "title": "Shape",
+              "pattern": "knobGroup",
+              "controls": ["hue-shift", "speed", "zoom", "rotate"]
+            },
+            {
+              "id": "layers-panel",
+              "title": "Layers",
+              "pattern": "layerToggles",
+              "controls": ["layers"]
+            },
+            {
+              "id": "camera",
+              "title": "Camera",
+              "pattern": "cameraControl",
+              "controls": ["cam", "zoom-nudge"]
+            },
+            {
+              "id": "scene-bar",
+              "title": "Scene",
+              "pattern": "sceneBar",
+              "controls": ["scene"]
+            }
+          ],
+          "layout": {
+            "tablet": {
+              "mix": {
+                "x": 0,
+                "y": 0,
+                "w": 4,
+                "h": 8
+              },
+              "shape": {
+                "x": 4,
+                "y": 0,
+                "w": 4,
+                "h": 6
+              },
+              "layers-panel": {
+                "x": 4,
+                "y": 6,
+                "w": 4,
+                "h": 2
+              },
+              "camera": {
+                "x": 8,
+                "y": 0,
+                "w": 4,
+                "h": 5
+              },
+              "scene-bar": {
+                "x": 8,
+                "y": 5,
+                "w": 4,
+                "h": 3
+              }
+            },
+            "phone": {
+              "mix": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 7
+              },
+              "shape": {
+                "x": 0,
+                "y": 7,
+                "w": 12,
+                "h": 7
+              },
+              "layers-panel": {
+                "x": 0,
+                "y": 14,
+                "w": 12,
+                "h": 3
+              },
+              "camera": {
+                "x": 0,
+                "y": 17,
+                "w": 12,
+                "h": 7
+              },
+              "scene-bar": {
+                "x": 0,
+                "y": 24,
+                "w": 12,
+                "h": 3
+              }
+            }
+          }
+        },
+        {
+          "id": "fx",
+          "title": "FX",
+          "controls": [
+            {
+              "id": "colour",
+              "type": "colorPicker",
+              "label": "Colour",
+              "address": "/vj/colour",
+              "default": "#3A4CA6",
+              "pickerStyle": "knobs"
+            },
+            {
+              "id": "focus",
+              "type": "xy",
+              "label": "Focus point",
+              "address": "/vj/focus"
+            },
+            {
+              "id": "audio-level",
+              "type": "meter",
+              "label": "Audio",
+              "feedback": "/wall/audio/level",
+              "preset": "meter/audio"
+            },
+            {
+              "id": "strobe",
+              "type": "toggle",
+              "label": "Strobe",
+              "address": "/vj/strobe"
+            },
+            {
+              "id": "blur",
+              "type": "knob",
+              "label": "Blur",
+              "address": "/vj/blur",
+              "default": 0.3
+            }
+          ],
+          "panels": [],
+          "layout": {
+            "tablet": {
+              "colour": {
+                "x": 0,
+                "y": 0,
+                "w": 4,
+                "h": 8
+              },
+              "focus": {
+                "x": 4,
+                "y": 0,
+                "w": 5,
+                "h": 8
+              },
+              "audio-level": {
+                "x": 9,
+                "y": 0,
+                "w": 1,
+                "h": 8
+              },
+              "blur": {
+                "x": 10,
+                "y": 0,
+                "w": 2,
+                "h": 5
+              },
+              "strobe": {
+                "x": 10,
+                "y": 5,
+                "w": 2,
+                "h": 3
+              }
+            },
+            "phone": {
+              "colour": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 9
+              },
+              "focus": {
+                "x": 0,
+                "y": 9,
+                "w": 12,
+                "h": 6
+              },
+              "audio-level": {
+                "x": 0,
+                "y": 15,
+                "w": 4,
+                "h": 5
+              },
+              "blur": {
+                "x": 4,
+                "y": 15,
+                "w": 4,
+                "h": 5
+              },
+              "strobe": {
+                "x": 8,
+                "y": 15,
+                "w": 4,
+                "h": 5
+              }
+            }
+          }
+        },
+        {
+          "id": "cues",
+          "title": "Cues",
+          "controls": [
+            {
+              "id": "cues",
+              "type": "buttonGrid",
+              "label": "Cues",
+              "address": "/vj/cue/{index}",
+              "rows": 2,
+              "cols": 4,
+              "mode": "radio",
+              "labels": ["Intro", "Drop", "Break", "Build", "Peak", "Calm", "Logo", "Outro"]
+            },
+            {
+              "id": "flash",
+              "type": "button",
+              "label": "Flash",
+              "address": "/vj/flash"
+            },
+            {
+              "id": "blackout",
+              "type": "holdToConfirm",
+              "label": "Blackout",
+              "address": "/vj/blackout",
+              "preset": "holdToConfirm/blackout"
+            }
+          ],
+          "panels": [
+            {
+              "id": "show",
+              "title": "Show",
+              "pattern": "showActions",
+              "controls": ["flash", "blackout"]
+            }
+          ],
+          "layout": {
+            "tablet": {
+              "cues": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 5
+              },
+              "show": {
+                "x": 0,
+                "y": 5,
+                "w": 12,
+                "h": 3
+              }
+            },
+            "phone": {
+              "cues": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 6
+              },
+              "show": {
+                "x": 0,
+                "y": 6,
+                "w": 12,
+                "h": 3
+              }
+            }
+          }
+        },
+        {
+          "id": "scenes",
+          "title": "Scenes",
+          "controls": [
+            {
+              "id": "scene-list",
+              "type": "sceneList",
+              "label": "Scene",
+              "address": "/vj/scene/list",
+              "crossfade": 2,
+              "scenes": [
+                {
+                  "id": "show",
+                  "label": "Show",
+                  "value": 1
+                },
+                {
+                  "id": "day",
+                  "label": "Day",
+                  "value": 2
+                },
+                {
+                  "id": "night",
+                  "label": "Night",
+                  "value": 3
+                },
+                {
+                  "id": "mono",
+                  "label": "Mono",
+                  "value": 4
+                }
+              ]
+            },
+            {
+              "id": "xfade",
+              "type": "fader",
+              "label": "Mix",
+              "address": "/vj/mix",
+              "preset": "fader/crossfade",
+              "orientation": "horizontal"
+            }
+          ],
+          "panels": [],
+          "layout": {
+            "tablet": {
+              "scene-list": {
+                "x": 0,
+                "y": 0,
+                "w": 6,
+                "h": 8
+              },
+              "xfade": {
+                "x": 6,
+                "y": 0,
+                "w": 6,
+                "h": 2
+              }
+            },
+            "phone": {
+              "scene-list": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 7
+              },
+              "xfade": {
+                "x": 0,
+                "y": 7,
+                "w": 12,
+                "h": 2
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "lighting",
+      "name": "Lighting cues",
+      "icon": "lightning",
+      "pages": [
+        {
+          "id": "cues",
+          "title": "Cues",
+          "controls": [
+            {
+              "id": "light-cues",
+              "type": "buttonGrid",
+              "label": "Cues",
+              "address": "/light/cue/{index}",
+              "rows": 3,
+              "cols": 4,
+              "mode": "radio"
+            },
+            {
+              "id": "light-level",
+              "type": "fader",
+              "label": "Level",
+              "address": "/light/level",
+              "default": 0.8
+            }
+          ],
+          "panels": [],
+          "layout": {
+            "tablet": {
+              "light-cues": {
+                "x": 0,
+                "y": 0,
+                "w": 9,
+                "h": 8
+              },
+              "light-level": {
+                "x": 9,
+                "y": 0,
+                "w": 3,
+                "h": 8
+              }
+            },
+            "phone": {
+              "light-cues": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 8
+              },
+              "light-level": {
+                "x": 0,
+                "y": 8,
+                "w": 12,
+                "h": 3
+              }
+            }
+          }
+        },
+        {
+          "id": "colour",
+          "title": "Colour",
+          "controls": [
+            {
+              "id": "light-colour",
+              "type": "colorPicker",
+              "label": "Colour",
+              "address": "/light/colour",
+              "default": "#3A4CA6",
+              "pickerStyle": "wheel"
+            }
+          ],
+          "panels": [],
+          "layout": {
+            "tablet": {
+              "light-colour": {
+                "x": 3,
+                "y": 0,
+                "w": 6,
+                "h": 8
+              }
+            },
+            "phone": {
+              "light-colour": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 9
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "lobby",
+      "name": "Lobby wall",
+      "formFactor": "phone",
+      "icon": "monitor",
+      "pages": [
+        {
+          "id": "live",
+          "title": "Live",
+          "controls": [
+            {
+              "id": "wall-scene",
+              "type": "segmented",
+              "label": "Scene",
+              "address": "/wall/scene",
+              "options": [
+                {
+                  "label": "Show",
+                  "value": "show",
+                  "icon": "lightning"
+                },
+                {
+                  "label": "Day",
+                  "value": "day",
+                  "icon": "sun"
+                },
+                {
+                  "label": "Night",
+                  "value": "night",
+                  "icon": "moon"
+                },
+                {
+                  "label": "Mono",
+                  "value": "mono",
+                  "icon": "circle-half"
+                }
+              ]
+            },
+            {
+              "id": "wall-logo",
+              "type": "toggle",
+              "label": "Logo",
+              "address": "/wall/logo",
+              "style": "switch",
+              "icon": "device-mobile",
+              "default": true
+            },
+            {
+              "id": "wall-data",
+              "type": "toggle",
+              "label": "Live data",
+              "address": "/wall/data",
+              "style": "switch",
+              "icon": "sliders-horizontal",
+              "default": true
+            },
+            {
+              "id": "wall-audio",
+              "type": "toggle",
+              "label": "Audio react",
+              "address": "/wall/audio-react",
+              "style": "switch",
+              "icon": "waveform",
+              "default": true
+            },
+            {
+              "id": "wall-brightness",
+              "type": "fader",
+              "label": "Brightness",
+              "address": "/wall/brightness",
+              "orientation": "horizontal",
+              "default": 0.6
+            },
+            {
+              "id": "hue-drift",
+              "type": "fader",
+              "label": "Hue drift",
+              "address": "/wall/hue-drift",
+              "mode": "relative",
+              "orientation": "horizontal",
+              "min": 0,
+              "max": 1
+            },
+            {
+              "id": "wall-speed",
+              "type": "knob",
+              "label": "Speed",
+              "address": "/wall/speed",
+              "default": 0.4
+            },
+            {
+              "id": "wall-hue",
+              "type": "knob",
+              "label": "Hue",
+              "address": "/wall/hue",
+              "preset": "knob/color-hue",
+              "default": 200
+            },
+            {
+              "id": "wall-flash",
+              "type": "button",
+              "label": "Flash",
+              "address": "/wall/flash"
+            },
+            {
+              "id": "wall-blackout",
+              "type": "holdToConfirm",
+              "label": "Blackout",
+              "address": "/wall/blackout",
+              "preset": "holdToConfirm/blackout"
+            }
+          ],
+          "panels": [
+            {
+              "id": "wall-switches",
+              "pattern": "list",
+              "controls": ["wall-logo", "wall-data", "wall-audio"]
+            }
+          ],
+          "layout": {
+            "phone": {
+              "wall-scene": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 2
+              },
+              "wall-switches": {
+                "x": 0,
+                "y": 2,
+                "w": 12,
+                "h": 4
+              },
+              "wall-brightness": {
+                "x": 0,
+                "y": 6,
+                "w": 12,
+                "h": 2
+              },
+              "hue-drift": {
+                "x": 0,
+                "y": 8,
+                "w": 12,
+                "h": 2
+              },
+              "wall-speed": {
+                "x": 0,
+                "y": 10,
+                "w": 6,
+                "h": 5
+              },
+              "wall-hue": {
+                "x": 6,
+                "y": 10,
+                "w": 6,
+                "h": 5
+              },
+              "wall-flash": {
+                "x": 0,
+                "y": 15,
+                "w": 6,
+                "h": 2
+              },
+              "wall-blackout": {
+                "x": 6,
+                "y": 15,
+                "w": 6,
+                "h": 2
+              }
+            },
+            "tablet": {
+              "wall-scene": {
+                "x": 0,
+                "y": 0,
+                "w": 6,
+                "h": 2
+              },
+              "wall-switches": {
+                "x": 0,
+                "y": 2,
+                "w": 6,
+                "h": 4
+              },
+              "wall-brightness": {
+                "x": 6,
+                "y": 0,
+                "w": 6,
+                "h": 2
+              },
+              "hue-drift": {
+                "x": 6,
+                "y": 2,
+                "w": 6,
+                "h": 2
+              },
+              "wall-speed": {
+                "x": 6,
+                "y": 4,
+                "w": 3,
+                "h": 4
+              },
+              "wall-hue": {
+                "x": 9,
+                "y": 4,
+                "w": 3,
+                "h": 4
+              },
+              "wall-flash": {
+                "x": 0,
+                "y": 6,
+                "w": 3,
+                "h": 2
+              },
+              "wall-blackout": {
+                "x": 3,
+                "y": 6,
+                "w": 3,
+                "h": 2
+              }
+            }
+          }
+        },
+        {
+          "id": "scenes",
+          "title": "Scenes",
+          "controls": [
+            {
+              "id": "wall-scene-list",
+              "type": "sceneList",
+              "label": "Scene",
+              "address": "/wall/scene/list",
+              "scenes": [
+                {
+                  "id": "morning",
+                  "label": "Morning",
+                  "value": 1
+                },
+                {
+                  "id": "day",
+                  "label": "Day",
+                  "value": 2
+                },
+                {
+                  "id": "evening",
+                  "label": "Evening",
+                  "value": 3
+                },
+                {
+                  "id": "night",
+                  "label": "Night",
+                  "value": 4
+                }
+              ]
+            }
+          ],
+          "panels": [],
+          "layout": {
+            "phone": {
+              "wall-scene-list": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 8
+              }
+            },
+            "tablet": {
+              "wall-scene-list": {
+                "x": 3,
+                "y": 0,
+                "w": 6,
+                "h": 8
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "system": {}
+}

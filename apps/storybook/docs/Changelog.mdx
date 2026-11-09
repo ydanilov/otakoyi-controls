@@ -1,0 +1,306 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Docs/Changelog" />
+
+# Changelog
+
+Design-system changes, newest first. Add an entry in the same PR as the change; mention renamed
+Figma components or variants explicitly (they are exporter API, ADR-014).
+
+## 2026-11-01 — System Screen (standard System group, ADR-018)
+
+**Added**
+
+- **System Screen** (Patterns): `SystemScreen` — output size presets (1920 × 1080, 1080 × 1920,
+  1280 × 1280, 3840 × 2160; the matching one lit), Width / Height steppers, Custom width / height
+  value inputs, Debug overlay switch row and Seed. The same for every installation; the app shows it
+  in Installation › System. Built only from existing parts (Console Panel, Button, Stepper, Value
+  Input, List Row). Figma: **System Screen** in the library, phone and tablet variants.
+
+## 2026-10-23 — Sheet layout: header never over the content, layout sensor
+
+**Added**
+
+- **Sheet** (Containers): `SheetScaffold` (header + scrolling body below it), `SheetSurface` and
+  `SheetToolbar` (the iPhone sheet toolbar, moved from the app) — Figma Client · Template › Phone /
+  07 Settings (sheet) 104:7979, Phone / 10 Installation (sheet) 104:8937. Metrics in `SHEET`
+  (`ds/logic.ts`): toolbar 16 + 44 + 10 = 70 pt, content 12 pt (Settings) / 16 pt (Installation)
+  below it; drawer header 72 pt + 8 pt; inspector content 24 pt, Close × 14 pt from the top.
+- **Layout sensor** (`stories/layout.ts`): `pnpm test-storybook` fails when a sheet header
+  overlaps its content or content is cut off at the side, in every story and both themes; sheet,
+  drawer and inspector stories compare the header height and the gap with Figma
+  (`expectSheetLayout`).
+
+**Fixed**
+
+- iPhone Settings / Installation sheets: the toolbar was drawn over the first section. Every
+  sheet, the iPad Settings drawer and the Installation inspector now use `SheetScaffold`; the
+  drawer's first section sits 8 pt below its header (was 12 pt), as in Tablet / 07 Settings 99:7941.
+
+## 2026-10-23 — Gyroscope (device tilt)
+
+**Added**
+
+- **Gyroscope** (Figma component set `Gyroscope`, 204:853; `State=Off / Live / Permission denied
+/ View only`): new control type `gyroscope` — the phone's tilt from the pose captured on switch-on
+  is sent as `<address> x y` (−1..1, y up) at `rateHz`, `range` degrees reaching ±1. Inset tilt
+  plane with crosshair, dashed half ring, full-range ring and dot (line + glow while live); the Menu
+  Switch turns sending on / off; Open Settings when motion access is denied. Story
+  _Controls › Gyroscope_. Presets `gyroscope/steer` (±20°) and `gyroscope/sway` (±45°). Exporter
+  maps `Gyroscope` (key `range=<degrees>`).
+- `ControlFrame` `valueMuted`: the header value in the muted colour (nothing live to show).
+
+## 2026-10-23 — Continuous controls under high-rate feedback
+
+**Fixed**
+
+- **XY Pad, Fader, Knob (incl. hue), Thumbstick, Color Picker** no longer copy `value` into state
+  from an effect. The readout is derived during render (`useHeldValue`: the finger's value while
+  held, the store's otherwise), so feedback at 30–60 Hz costs one render per change instead of two
+  and can no longer trip React's "Maximum update depth exceeded". The Color Picker follows feedback
+  with a render-time adjustment and computes edits outside state updaters.
+- **Meter**: the peak hold is stepped during render instead of in an effect on every level, so a
+  meter fed at 10–30 Hz (e.g. `/wall/audio/level` right after connecting) costs one commit per
+  message. Store subscriptions (`useControlValue`, mode, meta) are stable and no longer resubscribe
+  after every render; the store notifies a copy of its listeners.
+- Story _Pult › Connected Control › High-rate feedback_ counts React commits (test hook in
+  `.storybook/preview-head.html`): one feedback message must cost one commit.
+- The bridge recognises an installation's echo of its own in-flight commands (`PultStore`), so a
+  dragged control is no longer rewound to its older, float32 positions on every device.
+
+## 2026-10-23 — Client · Template (was Phase One)
+
+**Changed**
+
+- The Figma page **Client · Phase One** is now **Client · Template**, the starting point for every
+  client pult; its OSC annotations are the standard address set (no longer drafts) and the Brand
+  mode is `Aurora · Template`. Story _Pult Pager › Template · Aurora_ (was _Phase One · Aurora_),
+  exporter fixture `tools/figma-export/fixtures/template.*`, pult id `template`. Sample client
+  names in stories are now "Aurora Hall".
+- Exporter: `crossfade=1.5s` (seconds with a unit) is read like `crossfade=1.5`.
+
+## 2026-10-23 — Colour as three addresses, Status notifications
+
+**Added**
+
+- **Status Notifications Row** (Patterns; Figma List Row `Trailing=Switch`): the Settings switch
+  with its states — Off, On, Asking (permission prompt up), Denied (back off, with a caption) and
+  Unavailable (web pult, disabled with a caption).
+
+**Changed**
+
+- **Color Picker** sends three addresses by default (`format: "hsb"`): `<address>/h` (degrees, or
+  0–1 with `hueRange: "unit"`), `/s`, `/b`, each only when it changes; feedback per channel. The
+  single messages (`hsvFloat`, `rgbFloat`, `rgbInt`, `hex`) are an explicit opt-in. The story's
+  OSC readout shows only the channels a move changed; new story `SingleMessage`.
+
+## 2026-10-23 — Figma parity tails: layout, relative offsets, client themes, Depends on
+
+**Changed**
+
+- **Pult layout** (ADR-006, `layoutPage`): controls and panels keep their Figma heights and are
+  packed from the top — phone 16 / 12 pt in with 18 pt gaps and free space below; tablet Console
+  20 / 10 pt in with 16 pt gaps and each column's last item stretched to the bottom. Tokens
+  `control.pult*`. Replaces the stretch-rows-to-fill rule.
+- **Relative controls** (jog wheel, encoder knob) show the change accumulated since the session
+  started (`+12`, `+0.02`, `0.00`; `formatOffset`, store `offset()`), kept while the pult is open.
+- **Fader**: thumb 40 × 48 (horizontal) / 60 × 44 (vertical), the lit line from the end of the
+  rail, vertical ticks 12 pt in from the ends; **Jog** detents and − / + outside the body, the
+  wheel shaded by its Figma inner shadows. **Knob** fills its 160 pt body.
+- Control header 18 pt with a value, 14 pt with the label alone; Section and Console Panel
+  captions 14 pt; letter spacing token `tracking-overline` (8 %).
+- **Brand Mark** is the Figma knob (well, lit arc, disc, cap, LED) at every size; **Wordmark**
+  type per Figma; **Client Logo** white over the backdrop, `xl` for the iPad loading screen.
+- **Button** `lg` labels 13 pt; **Select** pop-up button 40 pt, `caret="down"` for pull-downs;
+  **Stat Tile** 56 pt, `outlined` (Prompt Mix weights); Fader Bank strips edge to edge with
+  76 pt ON buttons.
+- Sheets (web): iOS sheet colour, grabber, glass Close button (tokens `color.sheet`,
+  `sheetGrabber`, `sheetButton`).
+
+**Added**
+
+- `enabledWhen` (Figma “Depends on”) is evaluated: the control is Disabled until every condition
+  holds (`isEnabled`, `useControlEnabled`; story _Pult Pager › Depends on_).
+- Client themes from Figma: the Brand variable collection's modes (`brand/*`) are the config
+  `theme` (exporter `--brand`); `createTheme` takes primary pressed / subtle, on-accent and
+  primary-signal-light. The Storybook **Brand** toolbar lists every Figma Brand mode; story
+  _Pult Pager › Phase One · Aurora_.
+
+## 2026-10-22 — Figma port: Color Picker, Mix, Menu Switch, Meter, Settings drawer, Touch light from within, panels, demo
+
+**Added**
+
+- **Color Picker** (Patterns 139:1797, Style=Knobs / Square / Wheel) replaces the swatch-only
+  colour control: header with live swatch + hex, a capsule segmented control to switch styles (a
+  per-device view preference, `viewPrefs`), the same h / s / b value in every style. Knobs: hue ring
+  (segments and swatch tinted with S and B) + Saturation / Brightness knobs with gradient arcs;
+  Square: S × B field, hue strip, H / S / B readout; Wheel: hue × saturation wheel, brightness
+  slider, readout. Schema: `colorPicker.pickerStyle` (default style); `swatches` keeps the palette.
+- **Menu Switch** (156:14369): iOS-size 64×28 switch with an LED on a raised thumb (signal + glow
+  on, dim tick off; the track stays dark). List Row `Trailing=Switch` now draws it — Settings,
+  Installation › Modes, switch lists. The big Switch with grips stays for on-stage controls.
+- **Mix** and **Prompt Mix** patterns (84:1027, 84:934): two scene / prompt pop-up buttons (new
+  `Select variant="button"`, Icon/caret-up-down; B right-aligned in Mix) over the crossfade. No cut /
+  auto row, no A / B captions in Mix, no fader header in Mix.
+- **Drawer** + **DrawerHeader**: iPad Settings is a 400 pt floating drawer from the left (12 pt
+  inset, radius 28, dark fill, large title, round close) over the dimmed pult; swipe left or tap the
+  dim to close (`presentationFor("settings", tablet)` → `drawer`).
+- **Console-Panel patterns in the pult**: page `panels` (`faderBank`, `knobGroup`, `knobRow`,
+  `layerToggles`, `cameraControl`, `sceneBar`, `showActions`, `list`, `stack`). Responsive: max widths
+  640 / 480 / 560, centred when capped; never shorter than their Figma height (the pager moves them
+  to the next screen instead).
+- Toggle `style: "led"` (Group Button / Channel Strip ON button), Segmented option `icon`
+  (Content=Icon), control `icon` (list rows), pult `formFactor` (opens first on that device) and
+  `icon`. Fader `muted` (Figma State=Off) for an off strip.
+- **Connect** phone layout per Figma (106:8): centred brand, hero tile with the scan icon and glow,
+  actions pinned at the bottom, no "or" divider; tablet layout (106:161).
+
+**Changed**
+
+- **Touch light** reworked (Liquid Glass): white only, clipped to the touched element. Faders,
+  knobs, thumbstick, jog wheel: the thumb / disc / stick / wheel itself gets a radial white gradient
+  (16 % → 0) at the touch point — no separate halo. Pads, buttons, toggles, segments, quick actions,
+  XY: halo 7 % + core 12 % white. Tokens `touchLight` changed (`color`, `innerOpacity`,
+  `haloOpacity` 0.07, `coreOpacity` 0.12, `padScale`, `haloMax`); `knobLightCenter` →
+  `innerLightCenter`; new `InnerLight` / `useInnerLight`.
+- **Horizontal fader thumb** symmetric: the LED in the middle, two grip lines on each side (all
+  horizontal variants incl. Crossfade). Crossfade: no A / B letters (LED dots stay), the rail inset
+  28 pt, 22 pt lit centre detent; the shares move to the header ("A 30 · B 70").
+- **Meter** (11:172): 24-segment LED column in a recessed well; zones 70 / 90 %; unlit segments at
+  13 %; top 3 lit glow; white peak-hold line (1.5 s, then falls); dB scale 0 / −6 / −12 / −24 / −48.
+- **Relative indicator**: jog wheel and encoder knob show the ↻ glyph and a signed value (`+12`).
+- **Thumbstick** drawn as the Figma stick (raised base, collar, guide ring, knurled stick, dish,
+  lit direction arc). **XY Pad**: inset bed, faint crosshair, ringed glowing cursor, drag halo,
+  values with 2 decimals. **Label**: centred mono on a raised-surface card (MD 13, LG 28 bold).
+  **Hold to Confirm**: raised key (radius 14), accent ring while held, critical fill when sent.
+- **Inspector** (iPad Installation): round close button top-right; the content brings its header
+  ("Installation", name, status, stats, Pults, Quick actions, Modes). **Installation Actions**:
+  quick actions under a caption, no panel. **Chip** 36 pt with an 8 pt LED. **Button** LG 52 pt.
+- **Try the demo** is the Figma page "Demo · Try the demo" (`examples/try-the-demo.json`): VJ console
+  (tablet), Lighting cues, Lobby wall (phone); demo banner per Figma; no preview strip.
+
+## 2026-10-22 — Touch light: press response on all controls
+
+**Added**
+
+- **Touch Light** (Figma `Touch Light` 134:795, board 134:15404): while a finger is down a soft
+  light (primary halo + white core, ~20 % each) blooms under it inside the touch surface, follows it
+  1:1 and fades on release — in 120 ms ease-out (scale 0.6 → 1), out 260 ms ease-in; Reduce Motion
+  fades only. Above the surface fill, below labels, icons, LEDs and grips; never when disabled or
+  view-only.
+- On Fader (all modes and orientations, on the thumb), Knob (absolute, encoder, hue; both sizes),
+  Pad, Toggle (text and picture), Hold to Confirm, Group Button, Button Grid, Scene List, Segmented
+  (per segment), Quick Action, Button, XY Pad and Thumbstick.
+- Tokens `touchLight` (sizes, opacities, core colour, timings); maths in `@osc/controls`
+  `touchLight.ts`; `useTouchLight()` + `TouchLightSkia` / `TouchLightView` in `@osc/ui`.
+- Story **Controls/Touch Light**: `pinned` / `pinX` / `pinY` / `pinIndex` args pin the light
+  (`PinTouchLight`) so it shows in static snapshots.
+
+## 2026-10-22 — Debug page instead of the pult overlay; centred control headers
+
+**Changed**
+
+- Debug no longer overlays the pult: the per-control tags and the bottom HUD are gone from the pult
+  screen, and so is the Settings › Developer "Debug overlay" switch (and its stored preference).
+- The **Debug page** (Figma Phone / 20 Debug, Tablet / 20 Debug) is an iOS inset-grouped list:
+  **Connection** (Bridge, Round trip, Target, Last feedback, In control), **Traffic** (Sent,
+  Received, Installation FPS), **Controls** (one row per control on the current pult), **OSC log**
+  (last 50, newest first) and **Versions** (Protocol, Config revision, Schema). It scrolls; ping /
+  health polling runs only while it is open.
+- Entry points: Installation › **Debug** (subtitle "Bridge · OSC log", under Activity; pushed in
+  the iPhone sheet, in the iPad inspector with a back control) and Settings › Developer › **Debug**.
+- **Control headers**: vertical faders (and jog wheels) and knobs centre the label and value above
+  the control with a 6 pt gap; horizontal faders keep label left / value right (`ControlFrame
+align`).
+- **List Card**: `inset` for the separators (50 with icons, 16 for Debug Rows).
+- **Debug Tag** / **Debug HUD** stay in the library but are not used in the app now (story moved
+  to Patterns/Debug Tag & HUD); Pult Pager lost its debug story.
+
+**Added**
+
+- **Debug Row** (Kind=Metric: label, mono value; Kind=Control: label + mono address, mono value +
+  rate) and **OSC Log** (mono 11 lines: time, → sent in the signal colour / ← received in the
+  studio colour, address, value).
+
+## 2026-10-22 — code = Figma parity, sizes, picture pads, debug overlay
+
+**Changed**
+
+- Depth tokens are the Figma effect styles 1:1: Neu/Raised, Raised SM, Inset and Pressed are lit
+  from above (no diagonal offsets); glow is Glow/Primary (8 + 2) at rest and Glow/Primary Active
+  (12 + 3) while pressed / touched (was 14 + 4 everywhere). Continuous corners on iOS.
+- **Fader** (absolute / crossfade): recessed rail, thin lit value line, raised thumb with LED and
+  grips, ticks beside the rail (spread ×1.8 in fine mode); fine mode lights it in the accent with a
+  focus ring around the thumb. No more solid lime slot.
+- **Fader Mode=Relative**: a jog wheel — recessed housing, cylinder ribs that roll with the drag,
+  lit detent marks, − / +.
+- **Knob**: arc track, lit value arc, well, raised disc, cap and indicator dot, end stops
+  (Relative: dot ring with lit dots and a knurled disc; Color: spectrum over the 240° face and a
+  colour swatch). New `size: "compact"` (dial ≈ 0.7×).
+- **Tab Bar / Screen Tab** and the pult's screen tabs: a recessed capsule track with a raised
+  capsule tab. **Segmented**: raised capsule housing with the selected option as an inset capsule
+  and a glowing label — never a lit fill.
+- **Pads** (Pad, Toggle, Button Grid, Scene List, Button Group): raised keys; on = lit ring + soft
+  glow on a pressed-in key with a lit ON caption / LED strip; a momentary pad is lit only while
+  held. New `size` (150×88 / 104×64).
+- **List Card**: inset separators from the row text (50 pt). **List Row**: 20 pt icons, 14 pt gap.
+  **Switch**: Figma size (104×46 track, 58×40 thumb); in rows only the trailing LED.
+- Pult pager: page dots under the screens.
+
+**Added**
+
+- **Picture pad** (Toggle Content=Image): `image` from the config's asset bundle; label on a
+  legibility gradient, off dims the image, on adds the lit ring + LED.
+- **Debug Tag** and **Debug HUD** (Settings › Developer › Debug overlay), backed by `DebugStore`.
+
+## 2026-10-22 — navigation per Apple HIG, no client login (ADR-012, ADR-013, ADR-004)
+
+**Changed**
+
+- Pult Header: leading **Settings** and trailing **Installation** icon buttons.
+- Settings / Installation: system sheets (`presentationFor`), iPad Installation **Inspector**
+  (390 pt, no dimming). Edge swipes are shortcuts (`EdgeSwipe`; left edge phone only).
+- **Dialog** is content only (no background, grabber, scrim or home indicator); it sits in the
+  native sheet / form sheet.
+- **Scrim** dims only (no blur); `expo-blur` removed.
+- Copy: “Sign out” → “Forget this installation”; no appearance switch or brand editor in the app.
+
+**Added**
+
+- **Toast** (text + optional action, 5 s), **Context Menu** (long-press with preview) and
+  **Pull-down Menu** (image source picker) — native SwiftUI menus on iOS via `@expo/ui`.
+- Connect: **Connect Options**, **Connect Form** (address + PIN, `manualPairing`), **Backdrop**,
+  **Client Logo**, **Client Loading** screen.
+- Stories for the new control types (ADR-015): Fader relative/crossfade, Knob relative/hue,
+  Thumbstick, Button Group, Image, Mic, Prompt, switch-style Toggle, control LED.
+
+**Removed**
+
+- Custom swipe drawers (`Drawer`, `DrawerEdge`).
+
+## 2026-10-22 — design-system components and Storybook
+
+**Added**
+
+- Storybook (React Native Web + Vite) in `apps/storybook`: theme, brand and viewport switchers,
+  autodocs for every component, `play` interaction tests, a11y addon. Introduction, Guidelines and
+  this Changelog.
+- Depth tokens: `elevation.*` in `tokens.json` (dark + light), `boxShadow(theme, depth, glow)` and
+  the `Surface` primitive (Neu/Raised, Raised SM, Inset, Pressed, flat; Glow/\*).
+- Phosphor icons (`ds/icons.ts`, Figma `Icon/<name>`) and `Glyph`, `Led`.
+- Chrome: Button, Icon Button, Badge, Connection, Status Banner, Screen Tab, Tab Bar, Top Bar,
+  Nav Item, Brand Mark, Wordmark, Stat Tile, Note, Info Card, Chip, Loader, Divider, Scrim, Page Dots.
+- Forms: Input (`TextField`), Value Input, Select (native SwiftUI menu on iOS via `@expo/ui`),
+  Stepper, List Row, Switch (`LedSwitch`).
+- Containers: List Card, Section, Console Panel, Dialog (sheet / modal by width), Release Note,
+  Release Card, Pult Card, Viewfinder.
+- Media & actions: Quick Action (with hold), Master Bar, Activity Row, Image Tile, Image Upload,
+  Progress Ring (UI only).
+- Patterns: Quick Actions Row, Installation Actions, Installation Switcher, Activity Log,
+  Stepper Group.
+- Stories for every existing control, the pult renderer and the Reusables primitives.
+
+**Changed**
+
+- `PultHeader` uses `ConnectionStatus` and `StatusBanner` (neumorphic inset banner, solid studio bar).
+- `ThemeProvider` exposes `ThemeLayer` to re-apply the brand inside RN `Modal`s.

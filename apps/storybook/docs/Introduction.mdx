@@ -1,0 +1,74 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { ColorTable, DepthTable, ScaleTable } from "./TokenTables";
+
+<Meta title="Docs/Introduction" />
+
+# Otakoyi Controls — design system
+
+The design system of **Otakoyi Control**, the studio's controller for generative installations: a
+phone or tablet becomes a branded control surface (a _pult_) that sends OSC to TouchDesigner. This
+repository holds the public part: tokens, control logic and every component. The app, the bridge
+and the Figma exporter live in the private product repository.
+
+This Storybook is **the one home of component documentation**. Figma keeps a one-line description
+per component; purpose, anatomy, states, behaviour, accessibility, content rules and the Figma
+mapping live on each component's **Docs** page here.
+
+- **Code:** `packages/ui` — one story file next to every component (`*.stories.tsx`).
+- **Figma:** [OSC](https://www.figma.com/design/D2HHS8lt7PxZqxibv9PlOQ/OSC) — page _Components_
+  (library) and page _Patterns_ (compositions).
+- **Toolbar:** switch **Theme** (dark / light), **Brand** (Otakoyi and the two sample client brands
+  used by `/gallery`) and **Viewport** (phone 390 × 844, tablet 1180 × 820). Overlays pick sheet vs.
+  form sheet from the viewport width (`presentationFor`). Theme and brand switching is a review
+  tool only — in the app, branding and `theme.mode` come from the config (ADR-004).
+
+Read [Guidelines](?path=/docs/docs-guidelines--docs) before designing a screen.
+
+## Depth rules (ADR-013 addendum)
+
+| Depth                                      | Use for                                                                          | Code                               |
+| ------------------------------------------ | -------------------------------------------------------------------------------- | ---------------------------------- |
+| **Raised** (`Neu/Raised`, `Neu/Raised SM`) | interactive elements, top-level cards and panels                                 | `depth="raised"` / `"raisedSm"`    |
+| **Inset** (`Neu/Inset`, `Neu/Pressed`)     | active / pressed states; beds under controls (tracks, inputs, tab bars)          | `depth="inset"` / `"pressed"`      |
+| **Flat**                                   | information nested inside a card (chips, stat tiles, icon wells)                 | `depth="flat"`                     |
+| **Glow** (`Glow/*`)                        | lit values (LEDs, active page dot, live tile) and buttons **only while pressed** | `glow="signal" \| "critical" \| …` |
+
+Never glow at rest. Depth is never the only signal of state — pair it with colour, an icon or words.
+
+<DepthTable />
+
+## Tokens
+
+Everything visual comes from `@osc/tokens` (`packages/tokens/tokens.json` → `createTheme(brand)`).
+NativeWind classes use semantic names (`bg-primary`, `text-muted-foreground`, `bg-control-track`);
+Skia controls and depth read `useTheme()`. **No hex in components** (AGENTS.md rule 1).
+A client brand overrides primary, accent, neutrals, font and logo only; **status colours are never
+brandable** (rule 2). In light mode, lines and LEDs use a darkened signal colour (`control.fill`,
+≥ 3:1 against the background); buttons keep the exact brand colour.
+
+<ColorTable />
+
+<ScaleTable />
+
+Elevation colours (`elevation.dark` / `elevation.light`) and effect stacks (`elevation.effects`)
+mirror the Figma `elevation/*` variables and `Neu/*`, `Glow/*` styles; `boxShadow(theme, depth, glow)`
+turns them into a CSS box-shadow for web and React Native ≥ 0.76.
+
+## How a component maps to Figma
+
+Each Docs page ends with a **Figma** section: the component set (linked to its node) and a table
+_Figma variant → props_. Example — `Button`:
+
+| Figma                                            | Code                                   |
+| ------------------------------------------------ | -------------------------------------- |
+| `Button` · `Variant=Primary`                     | `<Button variant="primary" />`         |
+| `Button` · `State=Pressed`                       | runtime press (or `pressed` in review) |
+| `Button` · `State=Disabled`                      | `disabled`                             |
+| `Dialog` · `Container=Sheet` / `Container=Modal` | content in `presentationFor("dialog")` |
+| `List Row` · `Trailing=Switch`                   | `<ListRow trailing="switch" />`        |
+
+The full component → file table is in `docs/figma.md`.
+
+> **Figma names are API for the exporter (ADR-014).** Component and variant names are read by
+> the studio's Figma exporter (private product repo) to build installation configs. Renaming a component or a variant value is a
+> breaking change and needs an exporter mapping update in the same PR.
