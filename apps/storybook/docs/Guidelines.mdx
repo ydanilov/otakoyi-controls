@@ -5,6 +5,8 @@ import { Meta } from "@storybook/addon-docs/blocks";
 # Guidelines
 
 How the pieces fit on a screen. Component pages cover the details; these rules cover the whole.
+The intent behind them — what the pult should feel like, and what was tried and rejected — is in
+`DESIGN.md` at the repo root.
 
 ## Depth
 
@@ -72,6 +74,20 @@ platform: `dialogPresentation(width)` (< 600 pt → sheet), `reflowForPhone` for
 - Branding is the studio's delivery (ADR-004): the app has **no appearance switch and no brand or
   theme editor**; the theme mode comes from the config's `theme.mode`. (Storybook's theme and brand
   switchers are a dev tool.)
+
+## Switches, tabs and panel titles
+
+- **One switch.** Every on/off switch is the iOS-size **Menu Switch**: in a List Row (Settings,
+  Installation › Modes) and on the pult (Toggle `style: "switch"`, a row with the label and the
+  switch). There is no larger switch. A bigger on/off target on the pult is a **Toggle** pad.
+- **Panel titles are usually noise.** Leave a Console Panel untitled when its controls are
+  labelled; keep the title only when the panel's purpose is unclear without it.
+- **Settings pages are tabs.** A pult page (tab) holds whole TouchDesigner parameter pages
+  (contract groups); a group is split only when it alone is bigger than a screen. `live` first,
+  then `tune`; `setup` is a separate Setup pult. The most important controls are on the first
+  screen; the rest go to the next screens, swiped horizontally (product ADR-017, `pnpm pult-plan`).
+- **Dense by default.** Controls sit close at their Figma sizes; free space collects at the bottom
+  on a phone and goes to the last item of each column on a tablet.
 
 ## Status vs. brand
 

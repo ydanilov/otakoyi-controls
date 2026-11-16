@@ -22,12 +22,12 @@ const LED_H = 12;
 export const menuSwitchThumbX = (on: boolean) => (on ? TRACK_W - THUMB_W - PAD : PAD);
 
 /**
- * Figma `Menu Switch`: the iOS-size switch for menus and lists (List Row `trailing="switch"`:
- * Settings, Installation › Modes), in the Otakoyi style — a recessed dark track (`control/track`,
- * the same in both states), a raised dark thumb (the pult Switch's material) with a 3×12 LED in
- * its middle: signal with glow when on, dim tick colour when off. The thumb slides with a spring
- * (Reduce Motion: it jumps). Disabled = 40 % opacity. The big pult `LedSwitch` with grips stays for
- * on-stage controls only.
+ * Figma `Menu Switch`: the only switch of the design system, at the iOS switch size. Used in menus
+ * and lists (List Row `trailing="switch"`: Settings, Installation › Modes) and on the pult (Toggle
+ * `style: "switch"`). Otakoyi style — a recessed dark track (`control/track`, the same in both
+ * states), a raised dark thumb with a 3×12 LED in its middle: signal with glow when on, dim tick
+ * colour when off. The thumb slides with a spring (Reduce Motion: it jumps). Disabled = 40 %
+ * opacity. There is no larger switch: the big pult Switch with grips was removed (2026-11-16).
  */
 export function MenuSwitch({
   value,

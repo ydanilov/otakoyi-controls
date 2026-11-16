@@ -13,7 +13,7 @@ const meta = {
         component: primitiveDocs({
           name: "Switch",
           purpose: "shadcn switch (`@rn-primitives/switch`).",
-          prefer: "the DS `LedSwitch` (Figma Switch)",
+          prefer: "the DS `MenuSwitch` (Figma Menu Switch)",
           a11y: ["Role switch with checked."],
         }),
       },

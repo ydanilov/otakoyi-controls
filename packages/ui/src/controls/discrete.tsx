@@ -16,7 +16,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Text } from "@osc/ui/components/ui/text";
 import { cn } from "@osc/ui/lib/utils";
 import { CONTINUOUS, useDepthStyle, usePressState } from "../ds/depth";
-import { LedSwitch } from "../forms/LedSwitch";
+import { MenuSwitch } from "../forms/MenuSwitch";
 import { Glyph } from "../ds/Glyph";
 import { iconByName } from "../ds/iconByName";
 import type { PhosphorIcon } from "../ds/icons";
@@ -230,32 +230,34 @@ function LedToggle({ control: c, value, onChange, disabled }: ControlProps<"togg
 }
 
 /**
- * Hardware-style latching switch (toggle `style: "switch"`): the DS LED Switch on a raised card
- * row (Figma pult: Logo / Live data / Audio react).
+ * Latching switch row (toggle `style: "switch"`): a raised card row with the label and the
+ * iOS-size Menu Switch (Figma pult: Logo / Live data / Audio react). The whole row is the hit
+ * target and carries the switch role, like a List Row. The design system has one switch.
  */
 function SwitchToggle({ control: c, value, onChange, disabled }: ControlProps<"toggle">) {
   const on = value === true;
   const t = useTheme();
   const shadow = useDepthStyle("raised");
+  const label = c.label ?? c.id;
   return (
     <ControlFrame disabled={disabled}>
       <View className="flex-1 justify-center">
-        <View
-          className="bg-card min-h-16 flex-row items-center gap-3 px-4"
+        <Pressable
+          onPress={() => onChange(!on)}
+          disabled={disabled}
+          accessibilityRole="switch"
+          accessibilityLabel={label}
+          accessibilityState={{ checked: on, disabled: !!disabled }}
+          aria-checked={on}
+          aria-disabled={!!disabled}
+          className="bg-card min-h-touch flex-row items-center gap-3 px-4"
           style={[CONTINUOUS, { borderRadius: t.radius.lg }, shadow]}
         >
           <Text className="text-foreground text-md flex-1" numberOfLines={1}>
-            {c.label ?? c.id}
+            {label}
           </Text>
-          <LedSwitch
-            value={on}
-            onValueChange={(v) => onChange(v)}
-            label={c.label ?? c.id}
-            showLabel={false}
-            offLed={false}
-            disabled={disabled}
-          />
-        </View>
+          <MenuSwitch value={on} label={label} disabled={disabled} decorative />
+        </Pressable>
       </View>
     </ControlFrame>
   );

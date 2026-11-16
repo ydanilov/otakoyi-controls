@@ -61,13 +61,16 @@ const meta = {
         component: componentDocs({
           purpose: "Latched on/off on the pult: a layer, an effect, a mode. Schema type `toggle`.",
           use: ["Binary state that stays until changed."],
-          avoid: ["App settings — Switch (LedSwitch).", "Momentary triggers — Button (Pad)."],
+          avoid: [
+            "App settings — List Row with the Menu Switch.",
+            "Momentary triggers — Button (Pad).",
+          ],
           do: ["Label the thing, not the action (“Strobe”, not “Turn strobe on”)."],
           dont: ["Don't use two toggles for mutually exclusive options — Segmented."],
           anatomy: [
             "style button: raised pad; on = pressed-in key with a lit ring and soft glow (never a solid fill), label, ON (lit) / OFF caption",
             "picture pad (`image`): square image (168 / 120 pt), label bottom-left on a legibility gradient; off dims the image to ~45 %, on adds the lit ring + LED",
-            "style switch: a raised row with the LED Switch (same messages)",
+            "style switch: a raised row with the label and the Menu Switch (iOS size); the whole row is the hit target (same messages)",
           ],
           behaviour: [
             `Sends \`on\` args when switched on and \`off\` args when switched off — ${OSC_SOURCE}.`,
@@ -102,7 +105,19 @@ export const Off: Story = {
   },
 };
 export const On: Story = { args: { on: true } };
-export const SwitchStyle: Story = { args: { style: "switch", on: true } };
+/** Toggle `style: "switch"`: a row with the Menu Switch — the only switch in the system. */
+export const SwitchStyle: Story = {
+  args: { style: "switch", on: true },
+  play: async ({ canvas }) => {
+    const sw = await canvas.findByRole("switch", { name: "Strobe" });
+    await expect(await canvas.findByTestId("menu-switch-led-on")).toBeTruthy();
+    await userEvent.click(sw);
+    await expect(await canvas.findByText("OSC → /fx/strobe 0")).toBeVisible();
+    await expect(await canvas.findByTestId("menu-switch-led-off")).toBeTruthy();
+  },
+};
+export const SwitchStyleOff: Story = { args: { style: "switch" } };
+export const SwitchStyleDisabled: Story = { args: { style: "switch", disabled: true } };
 export const Disabled: Story = { args: { disabled: true } };
 export const Compact: Story = { args: { size: "compact", on: true } };
 export const PictureOff: Story = { args: { image: "demo-pad.jpg", label: "Logo" } };

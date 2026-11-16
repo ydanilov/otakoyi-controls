@@ -124,7 +124,6 @@ export { Toast } from "./chrome/Toast";
 export { TextField, ValueInput, type FieldState } from "./forms/Field";
 export { Select, type SelectOption, type SelectProps } from "./forms/Select";
 export { Stepper } from "./forms/Stepper";
-export { LedSwitch } from "./forms/LedSwitch";
 export { MenuSwitch } from "./forms/MenuSwitch";
 export { ListRow, type ListRowTrailing } from "./forms/ListRow";
 export {

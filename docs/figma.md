@@ -70,6 +70,11 @@ inside Installation (Phone / 20 Debug in the sheet, Tablet / 20 Debug in the ins
 control) and from Settings › Developer › Debug. It is an inset-grouped list — Section + List Card of
 Debug Rows (Connection, Traffic, Controls, Versions) and the OSC Log.
 
+One switch: every on/off switch is the iOS-size **Menu Switch** — in menus, lists and on the pult
+(Toggle `style: "switch"` draws a row with it). The big Switch with grips was removed (2026-11-16).
+Console Panel titles are usually dropped: keep one only when the panel's purpose is unclear
+without it. More in [DESIGN.md](../DESIGN.md).
+
 Control headers: vertical faders (and jog wheels) and knobs centre the label and value above the
 control, 6 pt apart; horizontal faders keep label left / value right (`ControlFrame align`).
 
@@ -88,10 +93,10 @@ brand colour. **Status colours live only in Base and are never aliased to Brand.
 
 ## Components
 
-Forms: Input, Value Input (label + recessed value with unit; Default / Focus / Error / Disabled; iOS number pad), Select (native iOS 27 popup button + pull-down menu; Default / Open / Disabled), Stepper, List Row, Switch (big, on-stage), Menu Switch (iOS size, menus and lists).
+Forms: Input, Value Input (label + recessed value with unit; Default / Focus / Error / Disabled; iOS number pad), Select (native iOS 27 popup button + pull-down menu; Default / Open / Disabled), Stepper, List Row, Menu Switch (iOS size; the only switch — menus, lists and the pult).
 
 Chrome: Button (Primary / Secondary / Ghost / Destructive × Default / Pressed / Disabled), Icon
-Button, Badge, Connection, Pult Select, Screen Tab, Tab Bar, Pult Header, Input, List Row, Switch,
+Button, Badge, Connection, Pult Select, Screen Tab, Tab Bar, Pult Header, Input, List Row, Menu Switch,
 Status Bar, Home Indicator, Top Bar, Brand Mark, Wordmark, Stat Tile, Note, Info Card, Chip, Loader,
 Divider (Line / Inset / Label), Scrim, Page Dots, Nav Item, Viewfinder, Toast, Backdrop, Client Logo.
 Slot containers: List Card, Section, Console Panel, Dialog (content for system sheets), Release Card,
@@ -142,7 +147,6 @@ are exporter API (ADR-014). Paths are under `packages/ui/src/`.
 | Value Input (State)                                                                                       | `ValueInput` (+ `parseValueInput`)                                            | `forms/Field.tsx`, `ds/logic.ts`                                                               |
 | Select (State=Default / Open / Disabled)                                                                  | `Select` (iOS: `@expo/ui` Picker)                                             | `forms/Select.tsx`, `forms/Select.ios.tsx`                                                     |
 | List Row (Trailing=Chevron / Value / Switch / None / Destructive)                                         | `ListRow trailing`                                                            | `forms/ListRow.tsx`                                                                            |
-| Switch (State=Off / On / Disabled)                                                                        | `LedSwitch value disabled`                                                    | `forms/LedSwitch.tsx`                                                                          |
 | Stepper (State=Default / Changed / Disabled)                                                              | `Stepper defaultValue` (+ `stepValue`)                                        | `forms/Stepper.tsx`, `ds/logic.ts`                                                             |
 | Activity Row (Kind)                                                                                       | `ActivityRow kind`                                                            | `media/ActivityRow.tsx`                                                                        |
 | Quick Action (State, incl. Hold)                                                                          | `QuickAction holdMs pressed disabled`                                         | `media/QuickAction.tsx`                                                                        |

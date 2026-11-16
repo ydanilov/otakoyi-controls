@@ -7,6 +7,30 @@ import { Meta } from "@storybook/addon-docs/blocks";
 Design-system changes, newest first. Add an entry in the same PR as the change; mention renamed
 Figma components or variants explicitly (they are exporter API, ADR-014).
 
+## 2026-11-16 — One switch: the big Switch is removed; DESIGN.md
+
+**Removed**
+
+- **Switch** (the big pult switch with grips and two LEDs, `LedSwitch`, `forms/LedSwitch.tsx`) and
+  its stories. **Breaking:** `LedSwitch` is no longer exported from `@osc/ui`; use `MenuSwitch`.
+  Figma: the `Switch` component is retired — every instance is now a `Menu Switch`
+  (**breaking for the exporter** if it maps `Switch`).
+
+**Changed**
+
+- **Toggle `style: "switch"`** draws a raised row with the label and the **Menu Switch** (64×28).
+  The whole row is the hit target and carries the switch role. The schema and the messages are
+  unchanged, so existing configs keep working.
+- **Menu Switch** is the only switch of the system: menus, lists and the pult.
+
+**Added**
+
+- `DESIGN.md`: the design intent in one place (thesis, light and colour, depth, touch, layout,
+  do / don't, tried and rejected). `AGENTS.md` points to it and has a new hard rule 7, "One switch".
+- Guidelines › Switches and panel titles: one switch, Console Panel titles usually dropped,
+  TouchDesigner parameter pages become pult tabs with the most important controls on the first
+  screen, dense by default.
+
 ## 2026-11-09 — Color Picker: Square first, Wheel removed, optional sliders
 
 **Changed**

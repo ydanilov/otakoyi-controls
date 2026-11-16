@@ -1,7 +1,8 @@
 # Otakoyi Controls — agent guide
 
 The design system of Otakoyi Control (tokens, control logic, components, Storybook). Read this
-before every task.
+before every task. Before designing or changing any UI, also read [DESIGN.md](DESIGN.md): the
+design intent — what the pult should feel like, and what was tried and rejected.
 
 This repo is the **single source** of the design system. The product (private `otakoyi-osc`: app,
 bridge, protocol, Figma exporter) checks it out as the `design-system` submodule, so keep package
@@ -18,6 +19,8 @@ names (`@osc/*`) and public exports stable; a breaking change needs a matching P
 5. **Every component has a story** with `componentDocs()` and a story per state; `play` tests where
    interactive. Add a Changelog entry (`apps/storybook/docs/Changelog.mdx`) with every change.
 6. **Figma names are API.** Renaming a component or variant is a breaking change.
+7. **One switch.** Every on/off switch is the iOS-size `MenuSwitch` (Figma `Menu Switch`), on the
+   pult too. Never add a larger or restyled switch.
 
 ## Workflow
 

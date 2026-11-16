@@ -15,7 +15,7 @@ const meta = {
         component: primitiveDocs({
           name: "Toggle",
           purpose: "shadcn toggle button (pressed state).",
-          prefer: "the Toggle control (pult) or `LedSwitch` (settings)",
+          prefer: "the Toggle control (pult) or `MenuSwitch` (settings)",
           a11y: ["Role button with pressed state; pass a label."],
         }),
       },

@@ -185,7 +185,7 @@ export const BUILTIN_PRESETS: readonly ControlPreset[] = [
     id: "toggle/switch",
     type: "toggle",
     label: "Switch",
-    description: "Hardware-style switch with ON / OFF LEDs, 1 / 0.",
+    description: "Row with the iOS-size switch, 1 / 0.",
     props: { style: "switch", on: [1], off: [0] },
   },
 

@@ -22,19 +22,20 @@ const meta = {
       description: {
         component: componentDocs({
           purpose:
-            'On/off in menus and lists — Settings, Installation › Modes — at the iOS switch size (64×28), in the Otakoyi style. `MenuSwitch`; List Row `trailing="switch"` draws it.',
+            'The only switch in the design system: on/off everywhere — menus, lists and the pult — at the iOS switch size (64×28), in the Otakoyi style. `MenuSwitch`; List Row `trailing="switch"` and Toggle `style: "switch"` draw it.',
           use: [
             "Settings preferences (Haptics, Keep screen awake).",
             "Installation modes (Idle, Pause).",
+            'Pult switch rows (Logo / Live data / Audio react) — Toggle `style: "switch"`.',
           ],
           avoid: [
-            'On-stage pult controls — the big pult Switch with grips (`LedSwitch`, Toggle `style: "switch"`).',
+            'A bigger on/off target on the pult — use the Toggle pad (`style: "button"`), never a larger switch.',
           ],
           do: ["Put it in a List Row so the whole row is the hit target."],
           dont: ["Don't tint the track when on — only the LED lights."],
           anatomy: [
             "Recessed track 64×28 (`control/track`, inner shadow), the same in both states",
-            "Raised dark thumb 38×24 (pult Switch material)",
+            "Raised dark thumb 38×24",
             "LED 3×12 in the thumb's middle: signal + glow when on, dim tick when off",
           ],
           behaviour: ["Tap toggles; the thumb slides with a spring. Reduce Motion: it jumps."],

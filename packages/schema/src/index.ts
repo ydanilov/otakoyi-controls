@@ -211,7 +211,7 @@ export const Toggle = z.object({
   off: z.array(oscValue).default([0]),
   default: z.boolean().default(false),
   /**
-   * button: a latching pad. switch: a hardware-style latching switch with two LEDs (ON / OFF).
+   * button: a latching pad. switch: a row with the label and the iOS-size Menu Switch.
    * led: a Group Button key — the label (or ON / OFF without one) over an LED strip; the channel
    * strip's ON button in a Fader Bank. Same messages in every style.
    */
