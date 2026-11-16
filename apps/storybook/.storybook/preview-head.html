@@ -69,7 +69,9 @@
   body.sb-main-padded {
     padding: 0 !important;
   }
-  #storybook-root {
+  /* Stories fill the frame. Only while the root holds a story: on a Docs page the root stays empty,
+     and a full-height root pushed the whole page below the first screen (docs looked blank). */
+  #storybook-root:not(:empty) {
     min-height: 100vh;
     display: flex;
   }
