@@ -7,6 +7,20 @@ import { Meta } from "@storybook/addon-docs/blocks";
 Design-system changes, newest first. Add an entry in the same PR as the change; mention renamed
 Figma components or variants explicitly (they are exporter API, ADR-014).
 
+## 2026-11-16 — Docs pages are visible again, in the system's look
+
+**Fixed**
+
+- Every Docs page (Introduction, Guidelines, Changelog and each component's Docs) looked blank: the
+  story root kept a full screen of height on Docs pages and pushed the page below the first screen.
+  The root only fills the frame while it holds a story.
+- Markdown tables in the docs pages render as tables (GitHub-flavoured Markdown, `remark-gfm`).
+
+**Changed**
+
+- Docs pages use the dark theme's surfaces, text and border tokens, brand lime for links, Inter and
+  JetBrains Mono.
+
 ## 2026-11-09 — Color Picker: Square first, Wheel removed, optional sliders
 
 **Changed**

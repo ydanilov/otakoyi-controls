@@ -2,6 +2,7 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { StorybookConfig } from "@storybook/react-native-web-vite";
+import remarkGfm from "remark-gfm";
 
 const require = createRequire(import.meta.url);
 /** CanvasKit (Skia for web) is served next to the preview, like the web pult serves it. */
@@ -10,7 +11,14 @@ const fontDir = (pkg: string) => dirname(require.resolve(`${pkg}/package.json`))
 
 const config: StorybookConfig = {
   stories: ["../docs/**/*.mdx", "../../../packages/ui/src/**/*.stories.tsx"],
-  addons: ["@storybook/addon-docs", "@storybook/addon-a11y"],
+  addons: [
+    // GFM: the docs pages use Markdown tables (Guidelines, Introduction, Changelog).
+    {
+      name: "@storybook/addon-docs",
+      options: { mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } } },
+    },
+    "@storybook/addon-a11y",
+  ],
   framework: {
     name: "@storybook/react-native-web-vite",
     options: {

@@ -7,6 +7,8 @@ import { STORY_BRANDS, type StoryBrandId } from "@osc/ui/stories/brands";
 import { withPlainHandlers } from "@osc/ui/stories/handlers";
 import { layoutViolations } from "@osc/ui/stories/layout";
 import * as React from "react";
+import { create } from "storybook/theming";
+import tokens from "@osc/tokens/tokens.json";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -45,6 +47,31 @@ const withProviders: Decorator = (Story, ctx) => {
   );
 };
 
+/**
+ * Docs pages in the system's own look: the dark theme's surfaces and text, brand lime for links,
+ * Inter and JetBrains Mono — so a docs page reads like the pult it documents.
+ */
+const c = tokens.color.dark;
+const docsTheme = create({
+  base: "dark",
+  colorPrimary: tokens.brandDefaults.primary,
+  colorSecondary: tokens.brandDefaults.primary,
+  appBg: c.background,
+  appContentBg: c.background,
+  appPreviewBg: c.surface,
+  appBorderColor: c.border,
+  appBorderRadius: tokens.radius.md,
+  barBg: c.surface,
+  textColor: c.text,
+  textMutedColor: c.textMuted,
+  textInverseColor: c.background,
+  inputBg: c.surface,
+  inputBorder: c.border,
+  inputTextColor: c.text,
+  fontBase: '"Inter", system-ui, sans-serif',
+  fontCode: '"JetBrains Mono", ui-monospace, monospace',
+});
+
 // Layout sensor: `pnpm test-storybook` calls it after every story (see stories/layout.ts).
 (globalThis as { __oscLayout?: typeof layoutViolations }).__oscLayout = layoutViolations;
 
@@ -78,6 +105,7 @@ const preview: Preview = {
   parameters: {
     layout: "padded",
     backgrounds: { disable: true },
+    docs: { theme: docsTheme },
     controls: { expanded: true, sort: "requiredFirst" },
     a11y: { test: "todo" },
     viewport: {
