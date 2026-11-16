@@ -23,6 +23,12 @@ Figma components or variants explicitly (they are exporter API, ADR-014).
   unchanged, so existing configs keep working.
 - **Menu Switch** is the only switch of the system: menus, lists and the pult.
 
+**Fixed**
+
+- The template pult story now shows Logo / Live data / Audio react on, as in Figma: the exporter
+  read the on state only from the retired `Switch`, not from the `Menu Switch` inside a List Row
+  (fixture re-exported).
+
 **Added**
 
 - `DESIGN.md`: the design intent in one place (thesis, light and colour, depth, touch, layout,

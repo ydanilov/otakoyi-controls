@@ -67,6 +67,7 @@
               "type": "toggle",
               "label": "Logo",
               "address": "/wall/logo",
+              "default": true,
               "icon": "device-mobile",
               "style": "switch"
             },
@@ -75,6 +76,7 @@
               "type": "toggle",
               "label": "Live data",
               "address": "/wall/live-data",
+              "default": true,
               "icon": "sliders-horizontal",
               "style": "switch"
             },
@@ -83,6 +85,7 @@
               "type": "toggle",
               "label": "Audio react",
               "address": "/wall/audio-react",
+              "default": true,
               "icon": "waveform",
               "style": "switch"
             },
